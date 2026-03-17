@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { HiOutlineCurrencyDollar, HiOutlineShoppingCart, HiOutlineUsers, HiOutlineCube, HiOutlineTrendingUp } from 'react-icons/hi';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
-import type { Order, User } from '../../types';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import type { DashboardStats } from '../../types';
 import { useTranslation } from 'react-i18next';
+import api from '../../api/axiosClient';
 
 const COLORS = ['#8b5cf6', '#ec4899', '#f59e0b', '#22c55e', '#06b6d4', '#ef4444', '#6366f1', '#14b8a6'];
 

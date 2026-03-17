@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { HiOutlineMail, HiOutlineLockClosed, HiOutlineUser, HiOutlineEye, HiOutlineEyeOff } from 'react-icons/hi';
 import { FcGoogle } from 'react-icons/fc';
@@ -15,7 +15,7 @@ const AuthPage = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const location = useLocation();
-    const { loading, error } = useAppSelector(s => s.auth);
+    const { loading } = useAppSelector(s => s.auth);
     const from = (location.state as any)?.from?.pathname || '/';
 
     const handleSubmit = async (e: React.FormEvent) => {

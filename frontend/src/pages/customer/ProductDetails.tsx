@@ -13,7 +13,7 @@ import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 
 const ProductDetails = () => {
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
     const { slug } = useParams();
     const [product, setProduct] = useState<Product | null>(null);
     const [reviews, setReviews] = useState<Review[]>([]);

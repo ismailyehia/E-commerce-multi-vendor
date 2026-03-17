@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { HiOutlineChartBar, HiOutlineCube, HiOutlineTag, HiOutlineClipboardList, HiOutlineUsers, HiOutlineSpeakerphone, HiOutlineCog, HiOutlineLogout, HiOutlineBell, HiMenu, HiX, HiOutlineTruck, HiOutlineTicket } from 'react-icons/hi';
+import { HiOutlineChartBar, HiOutlineCube, HiOutlineTag, HiOutlineClipboardList, HiOutlineUsers, HiOutlineSpeakerphone, HiOutlineLogout, HiOutlineBell, HiMenu, HiOutlineTruck, HiOutlineTicket } from 'react-icons/hi';
 import { useAppSelector, useAppDispatch } from '../hooks/useRedux';
 import { logout } from '../store/slices/authSlice';
 import LanguageSwitcher from '../components/shared/LanguageSwitcher';

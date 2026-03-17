@@ -17,7 +17,12 @@ const app = express();
 
 // Security middleware
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
-app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173', credentials: true }));
+
+const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+app.use(cors({
+    origin: clientUrl.includes(',') ? clientUrl.split(',') : clientUrl,
+    credentials: true
+}));
 
 // Rate limiting
 const limiter = rateLimit({
