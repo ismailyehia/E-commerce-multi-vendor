@@ -123,41 +123,49 @@ const toggleWishlist = async (req, res) => {
             return res.status(404).json({ message: 'Product not found' });
         }
 
-        // 2. Check if already in wishlist using findFirst + some
-        const isAlreadyWishlisted = await prisma.user.findFirst({
+        // 2. Check if already in wishlist
+        const existingItem = await prisma.wishlistitem.findUnique({
             where: {
-                id: userId,
-                wishlist: { some: { id: productId } }
+                userId_productId: { userId, productId }
             }
         });
 
         // 3. Perform update
-        const operation = isAlreadyWishlisted ? 'disconnect' : 'connect';
-        console.log(`[Wishlist] Action: ${operation} product ${productId} for user ${userId}`);
+        if (existingItem) {
+            console.log(`[Wishlist] Action: removing product ${productId} for user ${userId}`);
+            await prisma.wishlistitem.delete({
+                where: { id: existingItem.id }
+            });
+        } else {
+            console.log(`[Wishlist] Action: adding product ${productId} for user ${userId}`);
+            await prisma.wishlistitem.create({
+                data: { userId, productId }
+            });
+        }
 
-        const updatedUser = await prisma.user.update({
+        const updatedUser = await prisma.user.findUnique({
             where: { id: userId },
-            data: {
-                wishlist: {
-                    [operation]: { id: productId }
-                }
-            },
             include: {
                 wishlist: {
-                    select: {
-                        id: true, name: true, slug: true, price: true,
-                        images: true, thumbnail: true, avgRating: true, numReviews: true,
-                        totalStock: true, comparePrice: true
+                    include: {
+                        product: {
+                            select: {
+                                id: true, name: true, slug: true, price: true,
+                                images: true, thumbnail: true, avgRating: true, numReviews: true,
+                                totalStock: true, comparePrice: true
+                            }
+                        }
                     }
                 }
             }
         });
 
-        const formattedWishlist = updatedUser.wishlist.map(product => {
-            if (typeof product.images === 'string') {
-                try { product.images = JSON.parse(product.images); } catch (e) { product.images = []; }
+        const formattedWishlist = updatedUser.wishlist.map(item => {
+            const prod = item.product;
+            if (typeof prod.images === 'string') {
+                try { prod.images = JSON.parse(prod.images); } catch (e) { prod.images = []; }
             }
-            return product;
+            return prod;
         });
 
         res.json(formattedWishlist);
@@ -173,16 +181,21 @@ const getWishlist = async (req, res) => {
             where: { id: req.user.id },
             include: {
                 wishlist: {
-                    select: { id: true, name: true, slug: true, price: true, comparePrice: true, images: true, thumbnail: true, avgRating: true, numReviews: true, totalStock: true }
+                    include: {
+                        product: {
+                            select: { id: true, name: true, slug: true, price: true, comparePrice: true, images: true, thumbnail: true, avgRating: true, numReviews: true, totalStock: true }
+                        }
+                    }
                 }
             }
         });
 
-        const wishlist = (user?.wishlist || []).map(product => {
-            if (typeof product.images === 'string') {
-                try { product.images = JSON.parse(product.images); } catch (e) { product.images = []; }
+        const wishlist = (user?.wishlist || []).map(item => {
+            const prod = item.product;
+            if (typeof prod.images === 'string') {
+                try { prod.images = JSON.parse(prod.images); } catch (e) { prod.images = []; }
             }
-            return product;
+            return prod;
         });
 
         res.json(wishlist);

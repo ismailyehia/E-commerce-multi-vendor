@@ -96,8 +96,8 @@ model category {
   parent              category?  @relation("categoryTocategory", fields: [parentId], references: [id], map: "Category_parentId_fkey")
   subcategories       category[] @relation("categoryTocategory")
   products            product[]  @relation("product_categoryIdTocategory")
-  subcategoryProducts product[]  @relation("product_subcategoryIdTocategory")
-  coupon              coupon[]   @relation("couponcategories")
+  subcategoryProducts product[]         @relation("product_subcategoryIdTocategory")
+  coupons             couponcategory[]
 
   @@index([parentId], map: "Category_parentId_fkey")
 }
@@ -118,8 +118,8 @@ model coupon {
   updatedAt      DateTime   @default(now()) @updatedAt
   createdById    String?
   user           user?      @relation(fields: [createdById], references: [id], map: "Coupon_createdById_fkey")
-  category       category[] @relation("couponcategories")
-  product        product[]  @relation("couponproducts")
+  categories     couponcategory[]
+  products       couponproduct[]
 
   @@index([createdById], map: "Coupon_createdById_fkey")
 }
@@ -303,8 +303,8 @@ model product {
   recentlyviewed    recentlyviewed[]
   review            review[]
   variants          variant[]
-  coupon            coupon[]         @relation("couponproducts")
-  user_userwishlist user[]           @relation("userwishlist")
+  coupons           couponproduct[]
+  wishlistedBy      wishlistitem[]
 
   @@index([avgRating], map: "Product_avgRating_idx")
   @@index([categoryId, isActive], map: "Product_categoryId_isActive_idx")
@@ -392,7 +392,43 @@ model user {
   recentlyviewed      recentlyviewed[]
   review              review[]
   reviewvote          reviewvote[]
-  wishlist            product[]            @relation("userwishlist")
+  wishlist            wishlistitem[]
+}
+
+model wishlistitem {
+  id        String  @id @default(uuid())
+  userId    String
+  productId String
+  user      user    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@index([productId])
+  @@index([userId])
+}
+
+model couponcategory {
+  id         String   @id @default(uuid())
+  couponId   String
+  categoryId String
+  coupon     coupon   @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  category   category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([couponId, categoryId])
+  @@index([categoryId])
+  @@index([couponId])
+}
+
+model couponproduct {
+  id        String  @id @default(uuid())
+  couponId  String
+  productId String
+  coupon    coupon  @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  product   product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([couponId, productId])
+  @@index([productId])
+  @@index([couponId])
 }
 
 model variant {
