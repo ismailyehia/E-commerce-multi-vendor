@@ -1,4 +1,5 @@
 const { prisma } = require('../config/db');
+const { formatUser } = require('./authController');
 
 const getUsers = async (req, res) => {
     try {
