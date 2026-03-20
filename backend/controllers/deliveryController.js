@@ -373,13 +373,22 @@ const claimDelivery = async (req, res) => {
             return res.status(400).json({ message: 'Order already assigned or claimed' });
         }
 
+        // Format address string for the delivery record
+        let addressStr = order.shippingAddress;
+        if (typeof addressStr === 'string' && addressStr.startsWith('{')) {
+            try {
+                const addr = JSON.parse(addressStr);
+                addressStr = `${addr.street}, ${addr.city}, ${addr.state}, ${addr.zipCode}, ${addr.country}`;
+            } catch (e) { }
+        }
+
         // Create delivery record
         const delivery = await prisma.delivery.create({
             data: {
                 orderId,
                 deliverymanId: req.user.id,
                 status: 'accepted', // Auto-accept when claimed
-                deliveryLocationAddress: typeof order.shippingAddress === 'string' ? order.shippingAddress : JSON.stringify(order.shippingAddress)
+                deliveryLocationAddress: addressStr.substring(0, 500) // Truncate just in case
             }
         });
 

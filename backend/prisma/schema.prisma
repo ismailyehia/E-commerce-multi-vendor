@@ -132,10 +132,10 @@ model delivery {
   currentLocationTime     DateTime             @default(now())
   pickupLocationLat       Float?
   pickupLocationLng       Float?
-  pickupLocationAddress   String?
+  pickupLocationAddress   String?              @db.Text
   deliveryLocationLat     Float?
   deliveryLocationLng     Float?
-  deliveryLocationAddress String?
+  deliveryLocationAddress String?              @db.Text
   estimatedDeliveryTime   DateTime?
   actualDeliveryTime      DateTime?
   distance                Float?
