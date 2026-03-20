@@ -25,7 +25,7 @@ const ProductDetails = () => {
     const [activeTab, setActiveTab] = useState<'description' | 'reviews'>('description');
     const { user, isAuthenticated } = useAppSelector(s => s.auth);
     const dispatch = useAppDispatch();
-    const isWishlisted = isAuthenticated && user?.wishlist && product && (user.wishlist as string[]).includes(product.id);
+    const isWishlisted = isAuthenticated && user?.wishlist && product && (user.wishlist as any[]).some((p: any) => (typeof p === 'string' ? p : p.id) === product.id);
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -60,12 +60,21 @@ const ProductDetails = () => {
 
     const handleWishlist = async () => {
         if (!isAuthenticated) return toast.error('Please login first');
+        console.log(`[Wishlist] Requesting toggle from Details for product: ${product.id} at ${new Date().toISOString()}`);
         try {
-            await api.post(`/users/wishlist/${product.id}`);
-            const me = await api.get('/auth/me');
-            dispatch(setUser(me.data));
-            toast.success(isWishlisted ? 'Removed from wishlist' : 'Added to wishlist');
-        } catch { toast.error('Failed'); }
+            const { data } = await api.post(`/users/wishlist/${product.id}`);
+            console.log('[Wishlist] Success response:', data);
+            dispatch(setUser(data));
+            toast.success(isWishlisted ? (t('removed_from_wishlist') || 'Removed from wishlist') : (t('added_to_wishlist') || 'Added to wishlist'));
+        } catch (err: any) {
+            console.error('[Wishlist ERROR]', {
+                message: err.message,
+                status: err.response?.status,
+                data: err.response?.data,
+                stack: err.stack
+            });
+            toast.error(err.response?.data?.message || t('failed_to_update_wishlist') || 'Failed to update wishlist');
+        }
     };
 
     const uniqueColors = [...new Set(product.variants?.map(v => v.color).filter(Boolean))];

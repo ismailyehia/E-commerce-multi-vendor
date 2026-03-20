@@ -106,7 +106,7 @@ const createProduct = async (req, res) => {
         let thumbnail = null;
 
         if (req.files && req.files.length > 0) {
-            images = req.files.map(f => `/uploads/products/${f.filename}`);
+            images = req.files.map(f => f.path);
             thumbnail = images[0];
         }
 
@@ -173,7 +173,7 @@ const updateProduct = async (req, res) => {
         if (subcategory) updateData.subcategoryId = subcategory;
 
         if (req.files && req.files.length > 0) {
-            const newImages = req.files.map(f => `/uploads/products/${f.filename}`);
+            const newImages = req.files.map(f => f.path);
             const existingImages = product.images ? (Array.isArray(product.images) ? product.images : JSON.parse(product.images)) : [];
             updateData.images = [...existingImages, ...newImages];
             if (!product.thumbnail) updateData.thumbnail = newImages[0];

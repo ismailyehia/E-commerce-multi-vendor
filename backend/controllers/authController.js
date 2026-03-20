@@ -18,6 +18,27 @@ const formatUser = (user) => {
         formatted.addresses = [];
     }
 
+    if (user.wishlist) {
+        console.log(`[Wishlist] Formatting wishlist with ${user.wishlist.length} items`);
+        formatted.wishlist = user.wishlist
+            .filter(item => {
+                const hasProduct = !!(item.product || item.id);
+                if (!hasProduct) console.warn(`[Wishlist] Filtering out null product item`);
+                return hasProduct;
+            })
+            .map(item => {
+                const prod = item.product ? { ...item.product } : { ...item };
+                if (prod && typeof prod.images === 'string') {
+                    try {
+                        prod.images = JSON.parse(prod.images);
+                    } catch (e) {
+                        prod.images = [];
+                    }
+                }
+                return prod;
+            });
+    }
+
     return formatted;
 };
 
@@ -157,7 +178,9 @@ const getMe = async (req, res) => {
             include: {
                 address: true,
                 wishlist: {
-                    select: { id: true, name: true, slug: true, images: true, price: true }
+                    include: {
+                        product: true
+                    }
                 }
             }
         });
@@ -195,7 +218,7 @@ const updateProfile = async (req, res) => {
         }
 
         if (req.file) {
-            updateData.avatar = `/uploads/avatars/${req.file.filename}`;
+            updateData.avatar = req.file.path;
         }
 
         const user = await prisma.user.update({
@@ -343,5 +366,6 @@ module.exports = {
     updateProfile,
     changePassword,
     googleAuth,
-    facebookAuth
+    facebookAuth,
+    formatUser
 };

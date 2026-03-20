@@ -89,7 +89,7 @@ const createAd = async (req, res) => {
         const adData = { ...req.body, createdById: req.user.id };
 
         if (req.file) {
-            adData.media = `/uploads/ads/${req.file.filename}`;
+            adData.media = req.file.path;
         }
 
         if (adData.budget) adData.budget = parseFloat(adData.budget);
@@ -114,7 +114,7 @@ const updateAd = async (req, res) => {
         const updateData = { ...req.body };
 
         if (req.file) {
-            updateData.media = `/uploads/ads/${req.file.filename}`;
+            updateData.media = req.file.path;
         }
 
         if (updateData.budget) updateData.budget = parseFloat(updateData.budget);

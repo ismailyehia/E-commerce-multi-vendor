@@ -1,72 +1,7 @@
 const multer = require('multer');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
-
-// Storage config for product images
-const productStorage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads/products');
-    },
-    filename: (req, file, cb) => {
-        const ext = path.extname(file.originalname);
-        cb(null, `product-${uuidv4()}${ext}`);
-    }
-});
-
-// Storage config for avatars
-const avatarStorage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads/avatars');
-    },
-    filename: (req, file, cb) => {
-        const ext = path.extname(file.originalname);
-        cb(null, `avatar-${uuidv4()}${ext}`);
-    }
-});
-
-// Storage config for ads
-const adStorage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads/ads');
-    },
-    filename: (req, file, cb) => {
-        const ext = path.extname(file.originalname);
-        cb(null, `ad-${uuidv4()}${ext}`);
-    }
-});
-
-// Storage config for reviews
-const reviewStorage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads/reviews');
-    },
-    filename: (req, file, cb) => {
-        const ext = path.extname(file.originalname);
-        cb(null, `review-${uuidv4()}${ext}`);
-    }
-});
-
-// Storage config for delivery proofs
-const deliveryStorage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads/deliveries');
-    },
-    filename: (req, file, cb) => {
-        const ext = path.extname(file.originalname);
-        cb(null, `delivery-${uuidv4()}${ext}`);
-    }
-});
-
-// Storage config for categories
-const categoryStorage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads/categories');
-    },
-    filename: (req, file, cb) => {
-        const ext = path.extname(file.originalname);
-        cb(null, `category-${uuidv4()}${ext}`);
-    }
-});
+const { storage } = require('../config/cloudinary');
 
 // File filter
 const imageFilter = (req, file, cb) => {
@@ -96,37 +31,37 @@ const videoFilter = (req, file, cb) => {
 
 // Upload middlewares
 const uploadProductImages = multer({
-    storage: productStorage,
+    storage: storage('products'),
     fileFilter: imageFilter,
     limits: { fileSize: 5 * 1024 * 1024 } // 5MB
 }).array('images', 10);
 
 const uploadAvatar = multer({
-    storage: avatarStorage,
+    storage: storage('avatars'),
     fileFilter: imageFilter,
     limits: { fileSize: 2 * 1024 * 1024 } // 2MB
 }).single('avatar');
 
 const uploadAdMedia = multer({
-    storage: adStorage,
+    storage: storage('ads'),
     fileFilter: videoFilter,
     limits: { fileSize: 50 * 1024 * 1024 } // 50MB for videos
 }).single('media');
 
 const uploadReviewImages = multer({
-    storage: reviewStorage,
+    storage: storage('reviews'),
     fileFilter: imageFilter,
     limits: { fileSize: 5 * 1024 * 1024 }
 }).array('images', 5);
 
 const uploadDeliveryProof = multer({
-    storage: deliveryStorage,
+    storage: storage('deliveries'),
     fileFilter: imageFilter,
     limits: { fileSize: 5 * 1024 * 1024 }
 }).single('proof');
 
 const uploadCategoryImage = multer({
-    storage: categoryStorage,
+    storage: storage('categories'),
     fileFilter: imageFilter,
     limits: { fileSize: 5 * 1024 * 1024 }
 }).single('image');

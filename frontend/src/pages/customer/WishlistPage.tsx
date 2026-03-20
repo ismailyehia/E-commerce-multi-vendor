@@ -30,13 +30,22 @@ const WishlistPage = () => {
     useEffect(() => { fetchWishlist(); }, []);
 
     const handleRemove = async (productId: string) => {
+        console.log(`[Wishlist] Requesting removal for product: ${productId} at ${new Date().toISOString()}`);
         try {
-            await api.post(`/users/wishlist/${productId}`);
+            const { data } = await api.post(`/users/wishlist/${productId}`);
+            console.log('[Wishlist] Success response:', data);
             setProducts(prev => prev.filter(p => p.id !== productId));
-            const me = await api.get('/auth/me');
-            dispatch(setUser(me.data));
+            dispatch(setUser(data));
             toast.success(t('removed_from_wishlist') || 'Removed from wishlist');
-        } catch { toast.error(t('failed') || 'Failed'); }
+        } catch (err: any) {
+            console.error('[Wishlist ERROR]', {
+                message: err.message,
+                status: err.response?.status,
+                data: err.response?.data,
+                stack: err.stack
+            });
+            toast.error(err.response?.data?.message || t('failed_to_update_wishlist') || 'Failed to update wishlist');
+        }
     };
 
     const handleAddToCart = (product: Product) => {

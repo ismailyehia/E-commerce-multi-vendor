@@ -71,7 +71,7 @@ const createReview = async (req, res) => {
 
         let images = [];
         if (req.files && req.files.length > 0) {
-            images = req.files.map(f => `/uploads/reviews/${f.filename}`);
+            images = req.files.map(f => f.path);
         }
 
         const review = await prisma.review.create({

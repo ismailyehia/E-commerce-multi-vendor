@@ -281,7 +281,7 @@ const uploadProof = async (req, res) => {
 
         let updatedDelivery = delivery;
         if (req.file) {
-            const proofImage = `/uploads/deliveries/${req.file.filename}`;
+            const proofImage = req.file.path;
             updatedDelivery = await prisma.delivery.update({
                 where: { id: req.params.id },
                 data: { proofImage }

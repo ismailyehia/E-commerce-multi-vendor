@@ -110,7 +110,7 @@ const toggleWishlist = async (req, res) => {
         const userId = req.user.id;
         const productId = req.params.productId;
 
-        console.log(`[Wishlist] Toggling for User: ${userId}, Product: ${productId}`);
+        console.log(`[Wishlist] START Toggling for User: ${userId}, Product: ${productId}`);
 
         // 1. Verify product exists
         const product = await prisma.product.findUnique({
@@ -136,67 +136,66 @@ const toggleWishlist = async (req, res) => {
             await prisma.wishlistitem.delete({
                 where: { id: existingItem.id }
             });
+            console.log(`[Wishlist] Action: SUCCESS removing product ${productId}`);
         } else {
             console.log(`[Wishlist] Action: adding product ${productId} for user ${userId}`);
             await prisma.wishlistitem.create({
                 data: { userId, productId }
             });
+            console.log(`[Wishlist] Action: SUCCESS adding product ${productId}`);
         }
 
-        const updatedUser = await prisma.user.findUnique({
+        console.log(`[Wishlist] Fetching updated user for wishlist sync...`);
+        // 4. Return the full user (same as getMe)
+        const user = await prisma.user.findUnique({
             where: { id: userId },
             include: {
+                address: true,
                 wishlist: {
                     include: {
-                        product: {
-                            select: {
-                                id: true, name: true, slug: true, price: true,
-                                images: true, thumbnail: true, avgRating: true, numReviews: true,
-                                totalStock: true, comparePrice: true
-                            }
-                        }
+                        product: true
                     }
                 }
             }
         });
 
-        const formattedWishlist = updatedUser.wishlist.map(item => {
-            const prod = item.product;
-            if (typeof prod.images === 'string') {
-                try { prod.images = JSON.parse(prod.images); } catch (e) { prod.images = []; }
-            }
-            return prod;
-        });
+        if (!user) {
+            console.error(`[Wishlist] User not found after update: ${userId}`);
+            return res.status(404).json({ message: 'User not found' });
+        }
 
-        res.json(formattedWishlist);
+        const formattedUser = formatUser(user);
+        console.log(`[Wishlist] SUCCESS: Returning formatted user`);
+        res.json(formattedUser);
     } catch (error) {
-        console.error(`[Wishlist] Error in toggleWishlist: ${error.message}`);
+        console.error(`[Wishlist ERROR] toggleWishlist:`, error);
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
 
 const getWishlist = async (req, res) => {
     try {
+        console.log(`[Wishlist] Fetching wishlist for User: ${req.user.id}`);
         const user = await prisma.user.findUnique({
             where: { id: req.user.id },
             include: {
                 wishlist: {
                     include: {
-                        product: {
-                            select: { id: true, name: true, slug: true, price: true, comparePrice: true, images: true, thumbnail: true, avgRating: true, numReviews: true, totalStock: true }
-                        }
+                        product: true
                     }
                 }
             }
         });
 
-        const wishlist = (user?.wishlist || []).map(item => {
-            const prod = item.product;
-            if (typeof prod.images === 'string') {
-                try { prod.images = JSON.parse(prod.images); } catch (e) { prod.images = []; }
-            }
-            return prod;
-        });
+        const wishlist = (user?.wishlist || [])
+            .filter(item => item.product)
+            .map(item => {
+                const prod = { ...item.product };
+                if (typeof prod.images === 'string') {
+                    try { prod.images = JSON.parse(prod.images); } catch (e) { prod.images = []; }
+                }
+                return prod;
+            });
 
         res.json(wishlist);
     } catch (error) {
@@ -209,17 +208,18 @@ const getRecentlyViewed = async (req, res) => {
         const views = await prisma.recentlyviewed.findMany({
             where: { userId: req.user.id },
             include: {
-                product: { select: { id: true, name: true, slug: true, price: true, images: true, thumbnail: true, avgRating: true } }
+                product: true
             },
             orderBy: { viewedAt: 'desc' },
             take: 12
         });
 
         const formattedViews = views.map(view => {
-            if (view.product && typeof view.product.images === 'string') {
-                try { view.product.images = JSON.parse(view.product.images); } catch (e) { view.product.images = []; }
+            const product = view.product ? { ...view.product } : null;
+            if (product && typeof product.images === 'string') {
+                try { product.images = JSON.parse(product.images); } catch (e) { product.images = []; }
             }
-            return view;
+            return { ...view, product };
         });
 
         res.json(formattedViews);

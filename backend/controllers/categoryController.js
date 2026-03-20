@@ -76,7 +76,7 @@ const createCategory = async (req, res) => {
         const categoryData = { ...req.body };
 
         if (req.file) {
-            categoryData.image = `/uploads/categories/${req.file.filename}`;
+            categoryData.image = req.file.path;
         }
 
         // Parse sortOrder if present
@@ -105,7 +105,7 @@ const updateCategory = async (req, res) => {
         const updateData = { ...req.body };
 
         if (req.file) {
-            updateData.image = `/uploads/categories/${req.file.filename}`;
+            updateData.image = req.file.path;
         }
 
         // Parse sortOrder if present

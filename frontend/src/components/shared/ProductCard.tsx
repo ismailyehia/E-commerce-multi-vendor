@@ -24,12 +24,21 @@ const ProductCard = ({ product, index = 0 }: Props) => {
     const handleWishlist = async (e: React.MouseEvent) => {
         e.preventDefault(); e.stopPropagation();
         if (!isAuthenticated) return toast.error(t('please_login_first') || 'Please login first');
+        console.log(`[Wishlist] Requesting toggle for product: ${product.id} at ${new Date().toISOString()}`);
         try {
-            await api.post(`/users/wishlist/${product.id}`);
-            const me = await api.get('/auth/me');
-            dispatch(setUser(me.data));
+            const { data } = await api.post(`/users/wishlist/${product.id}`);
+            console.log('[Wishlist] Success response:', data);
+            dispatch(setUser(data));
             toast.success(isWishlisted ? (t('removed_from_wishlist') || 'Removed from wishlist') : (t('added_to_wishlist') || 'Added to wishlist'));
-        } catch { toast.error(t('failed_to_update_wishlist') || 'Failed to update wishlist'); }
+        } catch (err: any) {
+            console.error('[Wishlist ERROR]', {
+                message: err.message,
+                status: err.response?.status,
+                data: err.response?.data,
+                stack: err.stack
+            });
+            toast.error(err.response?.data?.message || t('failed_to_update_wishlist') || 'Failed to update wishlist');
+        }
     };
 
     const handleAddToCart = (e: React.MouseEvent) => {
