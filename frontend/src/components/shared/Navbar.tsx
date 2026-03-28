@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { HiOutlineShoppingBag, HiOutlineHeart, HiOutlineSearch, HiMenu, HiX } from 'react-icons/hi';
 import { useAppSelector, useAppDispatch } from '../../hooks/useRedux';
@@ -18,6 +18,8 @@ const Navbar = () => {
     const { mobileMenuOpen } = useAppSelector((s: any) => s.ui);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const location = useLocation();
+    const isHomePage = location.pathname === '/';
     const [searchQuery, setSearchQuery] = useState('');
     const [suggestions, setSuggestions] = useState<Product[]>([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
@@ -78,15 +80,13 @@ const Navbar = () => {
     const wishlistCount = user?.wishlist?.length || 0;
 
     return (
-        <header className={`sticky top-0 z-50 transition-all duration-300 ${scrolled ? 'glass shadow-lg' : 'bg-white/95 backdrop-blur-sm'}`}>
+        <header className={`sticky top-0 z-50 transition-all duration-300 ${scrolled ? 'bg-home-bg/95 backdrop-blur-md shadow-lg border-b border-white/5' : isHomePage ? 'bg-home-bg' : 'bg-white/95 backdrop-blur-sm'}`}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16 lg:h-18">
                     {/* Logo */}
-                    <Link to="/" className="flex items-center gap-2 shrink-0">
-                        <div className="w-9 h-9 bg-gradient-to-br from-primary-500 to-accent-500 rounded-xl flex items-center justify-center">
-                            <span className="text-white font-bold text-lg">E</span>
-                        </div>
-                        <span className="hidden sm:block text-xl font-bold gradient-text">E-Store</span>
+                    <Link to="/" className="flex items-center gap-3 shrink-0">
+                        <img src="/logo.png" alt="LegendaryCommerce" className="w-14 h-14 object-contain" />
+                        <span className={`hidden sm:block text-xl font-bold ${isHomePage && !scrolled ? 'text-white' : 'gradient-text'}`}>LegendaryCommerce</span>
                     </Link>
 
                     {/* Search */}
@@ -97,7 +97,7 @@ const Navbar = () => {
                                 type="text" value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder={t('search_placeholder')}
-                                className="w-full pl-12 pr-4 py-2.5 bg-dark-50 rounded-xl border-none focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
+                                className={`w-full pl-12 pr-4 py-2.5 rounded-xl border-none focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all ${isHomePage || scrolled ? 'bg-white/10 text-white placeholder-white/50' : 'bg-dark-50 text-dark-800'}`}
                             />
                         </form>
                         <AnimatePresence>
@@ -124,14 +124,14 @@ const Navbar = () => {
                         <div className="hidden md:block">
                             <LanguageSwitcher />
                         </div>
-                        <Link to="/wishlist" className="relative p-2 rounded-xl hover:bg-dark-50 transition-colors hidden sm:flex">
-                            <HiOutlineHeart className="w-6 h-6 text-dark-600" />
+                        <Link to="/wishlist" className={`relative p-2 rounded-xl transition-colors hidden sm:flex ${isHomePage || scrolled ? 'hover:bg-white/10 text-white' : 'hover:bg-dark-50 text-dark-600'}`}>
+                            <HiOutlineHeart className="w-6 h-6" />
                             {wishlistCount > 0 && (
                                 <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-red-500 text-white text-[10px] rounded-full flex items-center justify-center font-bold">{wishlistCount}</span>
                             )}
                         </Link>
-                        <Link to="/cart" className="relative p-2 rounded-xl hover:bg-dark-50 transition-colors">
-                            <HiOutlineShoppingBag className="w-6 h-6 text-dark-600" />
+                        <Link to="/cart" className={`relative p-2 rounded-xl transition-colors ${isHomePage || scrolled ? 'hover:bg-white/10 text-white' : 'hover:bg-dark-50 text-dark-600'}`}>
+                            <HiOutlineShoppingBag className="w-6 h-6" />
                             {cartCount > 0 && (
                                 <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-accent-500 text-white text-xs rounded-full flex items-center justify-center font-bold">{cartCount}</span>
                             )}
@@ -139,11 +139,11 @@ const Navbar = () => {
 
                         {isAuthenticated ? (
                             <div ref={userMenuRef} className="relative">
-                                <button onClick={() => setShowUserMenu(!showUserMenu)} className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-dark-50 transition-colors">
+                                <button onClick={() => setShowUserMenu(!showUserMenu)} className={`flex items-center gap-2 p-1.5 rounded-xl transition-colors ${isHomePage || scrolled ? 'hover:bg-white/10' : 'hover:bg-dark-50'}`}>
                                     <div className="w-8 h-8 bg-gradient-to-br from-primary-400 to-primary-600 rounded-full flex items-center justify-center">
                                         <span className="text-white text-sm font-medium">{user?.name?.[0]}</span>
                                     </div>
-                                    <span className="hidden lg:block text-sm font-medium text-dark-700">{user?.name?.split(' ')[0]}</span>
+                                    <span className={`hidden lg:block text-sm font-medium ${isHomePage && !scrolled ? 'text-white' : 'text-dark-700'}`}>{user?.name?.split(' ')[0]}</span>
                                 </button>
                                 <AnimatePresence>
                                     {showUserMenu && (
@@ -170,7 +170,7 @@ const Navbar = () => {
                         <div className="md:hidden">
                             <LanguageSwitcher />
                         </div>
-                        <button onClick={() => dispatch(toggleMobileMenu())} className="md:hidden p-2 rounded-xl hover:bg-dark-50">
+                        <button onClick={() => dispatch(toggleMobileMenu())} className={`md:hidden p-2 rounded-xl transition-colors ${isHomePage || scrolled ? 'hover:bg-white/10 text-white' : 'hover:bg-dark-50 text-dark-900'}`}>
                             {mobileMenuOpen ? <HiX className="w-6 h-6" /> : <HiMenu className="w-6 h-6" />}
                         </button>
                     </div>

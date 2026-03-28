@@ -12,6 +12,7 @@
   "dependencies": {
     "@react-google-maps/api": "^2.20.8",
     "@reduxjs/toolkit": "^2.11.2",
+    "@splinetool/react-spline": "^4.1.0",
     "@stripe/react-stripe-js": "^5.6.1",
     "@stripe/stripe-js": "^8.9.0",
     "axios": "^1.13.6",

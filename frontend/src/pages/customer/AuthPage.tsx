@@ -43,11 +43,9 @@ const AuthPage = () => {
             {/* Left - Form */}
             <div className="flex-1 flex items-center justify-center p-6 sm:p-12">
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
-                    <div className="flex items-center gap-2 mb-8">
-                        <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-accent-500 rounded-xl flex items-center justify-center">
-                            <span className="text-white font-bold text-xl">E</span>
-                        </div>
-                        <span className="text-2xl font-bold gradient-text">E-Store</span>
+                    <div className="flex items-center gap-3 mb-8">
+                        <img src="/logo.png" alt="LegendaryCommerce" className="w-20 h-20 object-contain" />
+                        <span className="text-2xl font-bold gradient-text">LegendaryCommerce</span>
                     </div>
 
                     <h1 className="text-3xl font-bold text-dark-900 mb-2">{isLogin ? 'Welcome back' : 'Create account'}</h1>

@@ -47,13 +47,18 @@ const HomePage = () => {
 
 
     return (
-        <div className="min-h-screen">
+        <div className="min-h-screen bg-home-bg transition-colors duration-500">
             {/* Hero */}
-            <section className="relative overflow-hidden min-h-[520px] sm:min-h-[600px] flex items-center">
-                {/* Background Image */}
-                <div className="absolute inset-0">
-                    <img src="/hero-bg.png" alt="" className={`w-full h-full object-cover ${isRtl ? 'scale-x-[-1]' : ''}`} />
-                    <div className={`absolute inset-0 bg-gradient-to-r ${isRtl ? 'from-transparent via-black/40 to-black/85' : 'from-black/85 via-black/40 to-transparent'}`} />
+            <section className="relative overflow-hidden min-h-[520px] sm:min-h-[700px] lg:min-h-[850px] flex items-center">
+                {/* 3D Background */}
+                <div className="absolute inset-0 z-0 select-none pointer-events-none">
+                    <iframe 
+                        src="https://my.spline.design/vrworldherocopycopy-tilx9wCCSMX4P2vZTy6zGnaj-TJi/" 
+                        className="w-full h-full scale-[1.3] origin-center object-cover opacity-60"
+                        style={{ border: 'none' }}
+                        title="3D Background"
+                    />
+                    <div className={`absolute inset-0 bg-gradient-to-r ${isRtl ? 'from-transparent via-black/20 to-black/80' : 'from-black/80 via-black/20 to-transparent'} z-10`} />
                 </div>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 relative z-10 w-full">
                     <motion.div initial={{ opacity: 0, x: isRtl ? 30 : -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }} className="max-w-2xl">
@@ -90,13 +95,13 @@ const HomePage = () => {
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     {features.map((f, i) => (
                         <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
-                            className="card p-4 sm:p-5 flex items-center gap-3">
-                            <div className="w-11 h-11 bg-primary-50 rounded-xl flex items-center justify-center shrink-0">
-                                <f.icon className="w-6 h-6 text-primary-600" />
+                            className="glass p-4 sm:p-5 flex items-center gap-3">
+                            <div className="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center shrink-0 border border-white/10">
+                                <f.icon className="w-6 h-6 text-white" />
                             </div>
                             <div>
-                                <p className="font-semibold text-dark-800 text-sm">{f.title}</p>
-                                <p className="text-xs text-dark-400">{f.desc}</p>
+                                <p className="font-semibold text-white text-sm">{f.title}</p>
+                                <p className="text-xs text-white/60">{f.desc}</p>
                             </div>
                         </motion.div>
                     ))}
@@ -107,8 +112,8 @@ const HomePage = () => {
             <section className="page-container">
                 <div className="flex items-center justify-between mb-8">
                     <div>
-                        <h2 className="text-2xl sm:text-3xl font-bold text-dark-900">{t('shop_by_category')}</h2>
-                        <p className="text-dark-400 mt-1">{t('browse_selection')}</p>
+                        <h2 className="text-2xl sm:text-3xl font-bold text-white">{t('shop_by_category')}</h2>
+                        <p className="text-dark-200 mt-1">{t('browse_selection')}</p>
                     </div>
                     <Link to="/products" className="text-primary-600 font-medium text-sm hover:underline flex items-center gap-1">
                         {t('view_all')} <HiOutlineArrowRight className={`${isRtl ? 'rotate-180' : ''}`} />
@@ -163,8 +168,8 @@ const HomePage = () => {
             {featured.length > 0 && (
                 <section className="page-container">
                     <div className="flex items-center justify-between mb-8">
-                        <div><h2 className="text-2xl sm:text-3xl font-bold text-dark-900">{t('featured_products')}</h2><p className="text-dark-400 mt-1">{t('handpicked_for_you')}</p></div>
-                        <Link to="/products?featured=true" className="text-primary-600 font-medium text-sm hover:underline flex items-center gap-1">{t('view_all')} <HiOutlineArrowRight className={`${isRtl ? 'rotate-180' : ''}`} /></Link>
+                        <div><h2 className="text-2xl sm:text-3xl font-bold text-white">{t('featured_products')}</h2><p className="text-dark-200 mt-1">{t('handpicked_for_you')}</p></div>
+                        <Link to="/products?featured=true" className="text-primary-400 font-medium text-sm hover:underline flex items-center gap-1">{t('view_all')} <HiOutlineArrowRight className={`${isRtl ? 'rotate-180' : ''}`} /></Link>
                     </div>
                     {loading ? <LoadingSkeleton type="card" count={4} /> : (
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
@@ -178,8 +183,8 @@ const HomePage = () => {
             {newArrivals.length > 0 && (
                 <section className="page-container">
                     <div className="flex items-center justify-between mb-8">
-                        <div><h2 className="text-2xl sm:text-3xl font-bold text-dark-900">{t('new_arrival')}</h2><p className="text-dark-400 mt-1">{t('fresh_off_shelf')}</p></div>
-                        <Link to="/products?sort=newest" className="text-primary-600 font-medium text-sm hover:underline flex items-center gap-1">{t('view_all')} <HiOutlineArrowRight className={`${isRtl ? 'rotate-180' : ''}`} /></Link>
+                        <div><h2 className="text-2xl sm:text-3xl font-bold text-white">{t('new_arrival')}</h2><p className="text-dark-200 mt-1">{t('fresh_off_shelf')}</p></div>
+                        <Link to="/products?sort=newest" className="text-primary-400 font-medium text-sm hover:underline flex items-center gap-1">{t('view_all')} <HiOutlineArrowRight className={`${isRtl ? 'rotate-180' : ''}`} /></Link>
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
                         {newArrivals.slice(0, 4).map((p, i) => <ProductCard key={p.id} product={p} index={i} />)}

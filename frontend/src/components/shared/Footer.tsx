@@ -12,11 +12,9 @@ const Footer = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     {/* Brand */}
                     <div>
-                        <div className="flex items-center gap-2 mb-4">
-                            <div className="w-9 h-9 bg-gradient-to-br from-primary-500 to-accent-500 rounded-xl flex items-center justify-center">
-                                <span className="text-white font-bold text-lg">E</span>
-                            </div>
-                            <span className="text-xl font-bold text-white">{t('e_store') || 'E-Store'}</span>
+                        <div className="flex items-center gap-3 mb-4">
+                            <img src="/logo.png" alt="LegendaryCommerce" className="w-12 h-12 object-contain" />
+                            <span className="text-xl font-bold text-white">LegendaryCommerce</span>
                         </div>
                         <p className="text-sm text-dark-400 mb-4">{t('footer_desc') || 'Your premium online shopping destination. Quality products, fast delivery, and exceptional customer service.'}</p>
                         <div className="flex gap-3">
@@ -63,7 +61,7 @@ const Footer = () => {
                 </div>
 
                 <div className="border-t border-dark-800 mt-10 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <p className="text-sm text-dark-500">&copy; {new Date().getFullYear()} {t('e_store') || 'E-Store'}. {t('all_rights_reserved') || 'All rights reserved.'}</p>
+                    <p className="text-sm text-dark-500">&copy; {new Date().getFullYear()} LegendaryCommerce. {t('all_rights_reserved') || 'All rights reserved.'}</p>
                     <div className="flex gap-4 text-sm text-dark-500">
                         <a href="#" className="hover:text-primary-400 transition-colors">{t('privacy') || 'Privacy'}</a>
                         <a href="#" className="hover:text-primary-400 transition-colors">{t('terms') || 'Terms'}</a>
